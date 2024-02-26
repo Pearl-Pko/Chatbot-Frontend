@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
+import UserInput from "./UserInput";
+import ChatHistory from "./ChatHistory";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export const Speaker = {
+    AI: "AI",
+    User: "USER",
+};
+class Chat {
+    constructor(message, speaker) {
+        this.speaker = speaker;
+        this.message = message;
+        this.timestamp = new Date();
+    }
 }
 
-export default App;
+export default function App() {
+    const [messages, setMessages] = useState([]);
+
+    const onSendMessage = (message) => {
+        setMessages([
+            new Chat("Goo", Speaker.AI),
+            new Chat(message, Speaker.User),
+            ...messages,
+           
+        ]);
+    };
+
+    return (
+        <div className="flex bg-background w-screen h-screen justify-center px-6 ">
+            <div className="flex flex-col justify-end flex-1 max-w-screen-md">
+                <ChatHistory messages={messages} />
+                <UserInput onSendMessage={onSendMessage} />
+            </div>
+        </div>
+    );
+}
