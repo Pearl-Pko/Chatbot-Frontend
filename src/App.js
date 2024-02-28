@@ -20,7 +20,7 @@ export default function App() {
     const onSendMessage = (message) => {
         setMessages((prevMessages) => [new Chat(message, Speaker.User), ...prevMessages]);
         
-        fetch("http://localhost:5000/get-response", {
+        fetch("/api/get-response", {
             method: "POST", // or 'PUT'
             headers: {
                 "Content-Type": "application/json",
