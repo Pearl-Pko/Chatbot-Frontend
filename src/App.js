@@ -1,53 +1,17 @@
-import React, {useEffect, useState} from "react";
-import UserInput from "./UserInput";
-import ChatHistory from "./ChatHistory";
-
-export const Speaker = {
-    AI: "AI",
-    User: "USER",
-};
-class Chat {
-    constructor(message, speaker) {
-        this.speaker = speaker;
-        this.message = message;
-        this.timestamp = new Date();
-    }
-}
+import React from 'react'
+import { Routes, Route } from 'react-router'
+import Signup from './pages/Signup'
+import Signin from './pages/Signin'
+import Home from './pages/Home'
+import Help from './pages/Help'
 
 export default function App() {
-    const [messages, setMessages] = useState([]);
-
-    const onSendMessage = (message) => {
-        setMessages((prevMessages) => [new Chat(message, Speaker.User), ...prevMessages]);
-        
-        fetch("http://localhost:5000/get-response", {
-            method: "POST", // or 'PUT'
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({message: message}),
-        })
-            .then((res) => res.json())
-            .then((res) => {
-                console.log("yes")
-                setMessages((prevMessages) => [new Chat(res.response, Speaker.AI), ...prevMessages]);
-            })
-            .catch((error) => console.log(error));
-    };
-
-    useEffect(() => {
-        // console.log("rerender");
-    })
-
-    return (
-        <div className="flex bg-background w-screen h-screen justify-center px-6 ">
-            <div className="fixed h-12 w-screen bg-aiMessageBubble flex items-center text-lg justify-center text-white">
-                KoFIBot
-            </div>
-            <div className="flex flex-col justify-end flex-1 max-w-screen-md">
-                <ChatHistory messages={messages} />
-                <UserInput onSendMessage={onSendMessage} />
-            </div>
-        </div>
-    );
+  return (
+    <Routes>
+        <Route path="/signup" element={<Signup/>}/>
+        <Route path="/signin" element={<Signin/>}/>
+        <Route path="/home" element={<Home/>}/>
+        <Route path="/help" element={<Help/>}/>
+    </Routes>
+  )
 }

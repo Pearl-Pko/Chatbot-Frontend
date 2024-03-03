@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import {Speaker} from "./App";
 import clsx from "clsx";
+import { Speaker } from "../chat";
 
 export default function ChatMessage({message, key}) {
     // console.log(message);
