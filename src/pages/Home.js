@@ -30,8 +30,8 @@ export default function Home() {
     })
 
     return (
-        <div className="flex bg-background w-screen h-screen justify-center px-6 ">
-            <div className="fixed h-12 w-screen bg-aiMessageBubble flex items-center text-lg justify-center text-white">
+        <div className="flex bg-secondary-200 w-screen h-screen justify-center px-6 ">
+            <div className="fixed h-12 w-screen bg-secondary-100 flex items-center text-lg justify-center text-white">
                 KoFIBot
             </div>
             <div className="flex flex-col justify-end flex-1 max-w-screen-md">
