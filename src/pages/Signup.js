@@ -37,7 +37,7 @@ export default function Signup() {
                     </h2>
 
                     {error && (
-                        <div className="bg-red-300 px-2 py-2 rounded-xl mb-2">
+                        <div className="bg-red-300 px-2 py-2 rounded-md mb-2">
                             <p className="text-red-800">{error}</p>
                         </div>
                     )}
