@@ -14,7 +14,7 @@ export default function ChatMessage({message, key}) {
             className={clsx(
                 "px-3 py-2 rounded-lg max whitespace-pre w-3/4 text-wrap break-words",
                 message.speaker == Speaker.User
-                    ? "bg-secondary-100 text-primary-100 self-end pl-5"
+                    ? "bg-accent text-primary-100 self-end pl-5"
                     : "bg-secondary-100 self-start text-white pr-5 "
             )}
         >

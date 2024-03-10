@@ -2,8 +2,10 @@ import React from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import clsx from "clsx";
+import { useUser } from "../context/UserContext";
 
 export default function Drawer({isOpen, setDrawerOpen}) {
+    const {signOut} = useUser();
     console.log(isOpen);
     return (
         <div
@@ -21,7 +23,7 @@ export default function Drawer({isOpen, setDrawerOpen}) {
             
                 <div className="flex items-center gap-2 text-primary-100 hover:bg-secondary-100 hover:bg-opacity-55 active:bg-opacity-100 p-2 rounded-md">
                     <LogoutIcon fontSize="small" />
-                    <button>logout</button>
+                    <button onClick={() => signOut()}>logout</button>
                 </div>
             
         </div>

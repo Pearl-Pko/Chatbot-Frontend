@@ -28,10 +28,10 @@ export default function UserInput({onSendMessage}) {
             />
             {/* <IconButton className='bg-white'> */}
             <button
-                className="send-button"
+                className="send-button bg-accent"
                 onClick={() => sendMessage()}
             >
-                <SendIcon />
+                <SendIcon className="text-primary-100"/>
             </button>
 
             {/* </IconButton> */}

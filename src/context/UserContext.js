@@ -123,6 +123,7 @@ export const UserProvider = ({children}) => {
     };
 
     const signOut = () => {
+        setLoading(true);
         _signOut(auth)
             .then(() => {
                 dispatch({type: actionTypes.SIGN_OUT});
@@ -135,9 +136,7 @@ export const UserProvider = ({children}) => {
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("yes");
                 dispatch({type: actionTypes.SIGN_IN, payload: user.uid});
-                console.log(state.user);
             }
             setLoading(false);
         });
@@ -147,7 +146,7 @@ export const UserProvider = ({children}) => {
     return loading ? (
         <BlankPage />
     ) : (
-        <UserContext.Provider value={{state, signIn, signUp}}>
+        <UserContext.Provider value={{state, signIn, signUp, signOut}}>
             {children}
         </UserContext.Provider>
     );
