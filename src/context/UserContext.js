@@ -1,4 +1,10 @@
-import React, {createContext, useContext, useReducer} from "react";
+import React, {
+    createContext,
+    useState,
+    useContext,
+    useEffect,
+    useReducer,
+} from "react";
 import {
     signOut as _signOut,
     updateProfile,
@@ -7,6 +13,7 @@ import {
     onAuthStateChanged,
 } from "firebase/auth";
 import {auth} from "../firebase";
+import BlankPage from "../pages/BlankPage";
 
 export const UserContext = createContext();
 
@@ -48,6 +55,7 @@ function getFirebaseAuthErrorMessage(errorMesssage) {
 
 export const UserProvider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [loading, setLoading] = useState(true);
 
     console.log(state);
 
@@ -104,7 +112,7 @@ export const UserProvider = ({children}) => {
                     return displayError(
                         "The email is already in use by another account."
                     );
-                console.log(error.code)
+                console.log(error.code);
 
                 displayError("Failed to sign up");
             });
@@ -124,7 +132,21 @@ export const UserProvider = ({children}) => {
         // console.log(state.isSignedIn);
     };
 
-    return (
+    useEffect(() => {
+        const unsub = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("yes");
+                dispatch({type: actionTypes.SIGN_IN, payload: user.uid});
+                console.log(state.user);
+            }
+            setLoading(false);
+        });
+        return () => unsub();
+    }, []);
+
+    return loading ? (
+        <BlankPage />
+    ) : (
         <UserContext.Provider value={{state, signIn, signUp}}>
             {children}
         </UserContext.Provider>

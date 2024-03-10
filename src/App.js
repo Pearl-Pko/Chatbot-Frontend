@@ -6,16 +6,17 @@ import Home from "./pages/Home";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 import { useUser } from "./context/UserContext";
+import { auth } from "./firebase";
 
 export default function App() {
     const {state} = useUser();
 
-    console.log(state);
+    console.log("auth current user", auth.currentUser);
 
     return (
         <Routes>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={(!state.user) ? <Signup /> : <Navigate to="/"/>} />
+            <Route path="/signin" element={(!state.user) ? <Signin /> : <Navigate to="/"/>} />
             <Route path="/" element={(state.user) ? <Home /> : <Navigate to="/signin"/>} />
             <Route path="/help" element={<Help />} />
             <Route path="*" element={<NotFound />} />
