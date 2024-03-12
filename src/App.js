@@ -11,7 +11,7 @@ import { auth } from "./firebase";
 export default function App() {
     const {state} = useUser();
 
-    console.log("auth current user", auth.currentUser);
+    // console.log("auth current user", auth.currentUser);
 
     return (
         <Routes>
