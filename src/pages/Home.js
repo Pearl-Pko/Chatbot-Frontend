@@ -14,6 +14,7 @@ import {
     query,
     serverTimestamp,
     where,
+    getDoc
 } from "firebase/firestore";
 import {auth, db} from "../firebase";
 import {useUser, runQueryWithTimeout} from "../context/UserContext";
@@ -75,13 +76,10 @@ export default function Home() {
             limit(1)
         );
 
-        console.log("how many");
-
         getDocs(conversationQuery)
             .then((querySnapshot) => {
                 let collectionId;
                 querySnapshot.forEach((doc) => {
-                    console.log("nooo");
                     collectionId = doc.id;
                 });
                 return collectionId;
@@ -118,9 +116,7 @@ export default function Home() {
                     status: MessageStatus.SENT,
                 });
             });
-            console.log("previous", previousMessages);
             setMessages(previousMessages);
-            console.log("messages set");
         });
     }, [state.conversationId]);
 
@@ -166,7 +162,7 @@ export default function Home() {
         //         console.log("error");
         //     });
 
-        console.log("server timestamp", serverTimestamp());
+        // console.log("server timestamp", serverTimestamp());
 
         const firestoreUserMessage = {
             conversationId: state.conversationId,
@@ -182,11 +178,14 @@ export default function Home() {
         setMessages([userMessage, ...messages]);
 
         runQueryWithTimeout(addDoc(messageRef, firestoreUserMessage), 6000)
-            .then((doc) => {
+            .then(async (docRef) => {
+                const docSnapshot = await getDoc(docRef);
+                const data = docSnapshot.data();
+
                 setMessages(prevMessages => 
                     prevMessages.map((item) =>
                         item.id === userMessage.id
-                            ? {...item, status: MessageStatus.SENT, id: doc.id}
+                            ? {...data, status: MessageStatus.SENT, id: data.id}
                             : item
                     )
                 );

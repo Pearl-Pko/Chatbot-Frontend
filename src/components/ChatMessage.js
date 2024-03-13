@@ -10,7 +10,7 @@ export default function ChatMessage({message, key}) {
     useEffect(() => {
         console.log("rerender");
     });
-    console.log(message);
+    console.log(message.status, message);
 
     return (
         <div
@@ -31,13 +31,16 @@ export default function ChatMessage({message, key}) {
             </div>
             <div className="text-primary-100 self-end">
                 {/* <Time width="20"/> */}
-                {message.status == MessageStatus.PENDING ? (
+                {(message.status == MessageStatus.PENDING) ? (
                     <IonIcon name="time-outline" />
                 ) : message.status == MessageStatus.SENT ? (
-                    <IonIcon name="checkmark-done" />
+                    <div className="flex items-center gap-2">
+                        {/* <IonIcon name="checkmark-done" /> */}
+                        <p className="text-sm">{message.sentAt?.toDate().toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit", hour12: true})}</p>
+                    </div>
                 ) : (
                     <div className="text-red-400">
-                        <IonIcon name="alert"/>
+                        <IonIcon name="alert" />
                     </div>
                 )}
             </div>
