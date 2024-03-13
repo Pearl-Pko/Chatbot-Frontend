@@ -21,13 +21,25 @@ export const useUser = () => useContext(UserContext);
 
 const initialState = {
     user: null,
+    conversationId: ""
 };
 
 const actionTypes = {
     SIGN_IN: "SIGN_IN",
     SIGN_UP: "SIGN_UP",
     SIGN_OUT: "SIGN_OUT",
+    UPDATE_CONVERSATION_ID: "UPDATE_CONVERSATION_ID"
 };
+
+export const runQueryWithTimeout = (promise, timeoutMs=2000) => {
+    const timeoutPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('Operation timed out'));
+        }, timeoutMs);
+    });
+
+    return Promise.race([promise, timeoutPromise]);
+}
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -44,6 +56,11 @@ const reducer = (state, action) => {
             };
         case actionTypes.SIGN_OUT:
             return initialState;
+        case actionTypes.UPDATE_CONVERSATION_ID:
+            return {
+                ...state,
+                conversationId: action.payload
+            }
         default:
             return initialState;
     }
@@ -122,16 +139,25 @@ export const UserProvider = ({children}) => {
         dispatch({type: actionTypes.SIGN_IN, payload: state.user});
     };
 
+    //ppp@gmail.com
+    //pppppp
+
     const signOut = () => {
-        setLoading(true);
+        console.log("log out");
+        // setLoading(true);
         _signOut(auth)
             .then(() => {
+                // setLoading(false);
                 dispatch({type: actionTypes.SIGN_OUT});
             })
             .catch(() => {});
 
         // console.log(state.isSignedIn);
     };
+
+    const updateConversationId = (conversationId) => {
+        dispatch({type: actionTypes.UPDATE_CONVERSATION_ID, payload: conversationId})
+    }
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
@@ -141,12 +167,12 @@ export const UserProvider = ({children}) => {
             setLoading(false);
         });
         return () => unsub();
-    }, []);
+    }, [state.user]);
 
     return loading ? (
         <BlankPage />
     ) : (
-        <UserContext.Provider value={{state, signIn, signUp, signOut}}>
+        <UserContext.Provider value={{state, signIn, signUp, signOut, updateConversationId}}>
             {children}
         </UserContext.Provider>
     );

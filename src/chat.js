@@ -4,10 +4,16 @@ export const Speaker = {
     User: "USER",
 };
 
+export const MessageStatus = {
+    SENT: "SENT", 
+    PENDING: "PENDING",
+    ERROR: "ERROR"
+}
+
 export class Chat {
-    constructor(message, speaker) {
-        this.speaker = speaker;
-        this.message = message;
+    constructor(content, sender) {
+        this.sender = sender;
+        this.content = content;
         this.timestamp = new Date();
     }
 }
