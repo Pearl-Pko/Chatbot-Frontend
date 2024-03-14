@@ -74,11 +74,7 @@ export const UserProvider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const [loading, setLoading] = useState(true);
 
-    console.log(state);
-
     const signIn = async (email, password, displayError) => {
-        console.log("yes");
-        // const auth = getAuth();
         return signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 console.log("signed in");
@@ -94,7 +90,6 @@ export const UserProvider = ({children}) => {
                         "The email address is badly formatted."
                     );
                 displayError("Failed to sign in");
-                console.log(error.code);
             });
         // .catch((error) => {
         //     console.log(error);

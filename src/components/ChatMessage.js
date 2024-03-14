@@ -45,7 +45,7 @@ function UserMessageBubble({message, key}) {
 
 function ChatBubbleLoading() {
     return (
-        <div className="flex gap-1 bubble-container">
+        <div className="flex gap-2 bubble-container">
             <div className="bubble delay-1000 bg-secondary-300"></div>
             <div className="bubble bg-secondary-300"></div>
             <div className="bubble bg-secondary-300 bubble2"></div>
@@ -55,7 +55,6 @@ function ChatBubbleLoading() {
 
 
 function AIMessageBubble({message, key}) {
-    console.log("ai message")
     return (
         <div className="max-w-3/4 flex flex-col self-start">
             <div className="px-3 py-2 rounded-lg whitespace-pre text-wrap break-words bg-secondary-100 text-white pr-5 ">

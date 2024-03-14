@@ -27,6 +27,8 @@ export default function Home() {
     const {state, updateConversationId} = useUser();
     const [messages, setMessages] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [canSend, setCanSend] = useState(true);
+    const [loadingChatHistory, setLoadingChatHistory] = useState(true);
 
     // const onSendMessage = (message) => {
     //     setMessages((prevMessages) => [
@@ -87,7 +89,6 @@ export default function Home() {
             })
             .then((collectionId) => {
                 if (!collectionId) {
-                    console.log("zaza");
                     addDoc(conversationRef, {
                         user_id: state.user,
                     }).then((doc) => {
@@ -101,8 +102,8 @@ export default function Home() {
             });
     }, [state.user]);
 
+    // this code loads the chat history
     useEffect(() => {
-        console.log("state converastion if", state.conversationId);
         const allMessagesQuery = query(
             messageRef,
             where("conversationId", "==", state.conversationId),
@@ -118,11 +119,13 @@ export default function Home() {
                 });
             });
             setMessages(previousMessages);
+            setLoadingChatHistory(false);
         });
     }, [state.conversationId]);
 
     const onSendMessage = async (message) => {
         console.log(state.conversationId);
+        setCanSend(false);
 
         const firestoreUserMessage = {
             conversationId: state.conversationId,
@@ -156,10 +159,7 @@ export default function Home() {
                     id: messages.length,
                     sender: Speaker.AI,
                 };
-                setMessages((prevMessages) => [
-                    aiMessage,
-                    ...prevMessages,
-                ]);
+                setMessages((prevMessages) => [aiMessage, ...prevMessages]);
 
                 fetch("http://localhost:5000/get-response", {
                     method: "POST", // or 'PUT'
@@ -169,7 +169,6 @@ export default function Home() {
                     body: JSON.stringify({message: message}),
                 })
                     .then((res) => {
-                       
                         return res.json();
                     })
                     .then((data) => {
@@ -184,21 +183,22 @@ export default function Home() {
                                 const docSnapshot = await getDoc(docRef);
                                 const data = docSnapshot.data();
 
-                                // setMessages((prevMessages) =>
-                                //     prevMessages.map((item) =>
-                                //         item.id === aiMessage.id
-                                //             ? {
-                                //                   ...data,
-                                //                   status: MessageStatus.SENT,
-                                //                   id: data.id,
-                                //               }
-                                //             : item
-                                //     )
-                                // );
-                                console.log("data", data);
+                                setMessages((prevMessages) =>
+                                    prevMessages.map((item) =>
+                                        item.id === aiMessage.id
+                                            ? {
+                                                  ...data,
+                                                  status: MessageStatus.SENT,
+                                                  id: data.id,
+                                              }
+                                            : item
+                                    )
+                                );
+                                setCanSend(true);
                             }
                         );
-                    }).catch((error) => {});
+                    })
+                    .catch((error) => {});
             })
             .catch((error) => {
                 setMessages((prevMessages) =>
@@ -208,6 +208,7 @@ export default function Home() {
                             : item
                     )
                 );
+                setCanSend(true);
             });
 
         // try {
@@ -220,14 +221,7 @@ export default function Home() {
         //     setMessages(messages.map((item) => item.id === userMessage.id ? {...item, status: MessageStatus.ERROR} : item));
         //     // console.log(error);
         // }
-
-        console.log("ue");
     };
-
-    useEffect(() => {
-        console.log(messages);
-        // console.log("rerender");
-    });
 
     return (
         <div className="flex bg-secondary-200 w-screen h-screen justify-center px-6 ">
@@ -241,12 +235,20 @@ export default function Home() {
 
                 <p>KoFIBot</p>
             </div>
-
             <Drawer isOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-            <div className="flex flex-col justify-end flex-1 max-w-screen-md">
-                <ChatHistory messages={messages} />
-                <UserInput onSendMessage={onSendMessage} />
-            </div>
+            {loadingChatHistory ? (
+                <div className="flex flex-col justify-center items-center">
+                    <p className="text-primary-100">Loading chat history....</p>
+                </div>
+            ) : (
+                <div className="flex flex-col justify-end flex-1 max-w-screen-md">
+                    <ChatHistory messages={messages} />
+                    <UserInput
+                        onSendMessage={onSendMessage}
+                        canSend={canSend}
+                    />
+                </div>
+            )}
         </div>
     );
 }
