@@ -1,0 +1,40 @@
+.bubble {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    border-radius: 100%;
+    animation-name: bubble;
+    animation-duration: .8s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.bubble-container:nth-child(0) {
+    background-color: red;
+}
+
+.bubble-container:nth-child(2) {
+    background-color: red;
+    animation-delay: 0.2s;
+}
+
+.bubble2 {
+    animation-delay: 0.3;
+}
+
+@keyframes bubble {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(0.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

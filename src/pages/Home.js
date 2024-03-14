@@ -14,10 +14,11 @@ import {
     query,
     serverTimestamp,
     where,
-    getDoc
+    getDoc,
 } from "firebase/firestore";
 import {auth, db} from "../firebase";
 import {useUser, runQueryWithTimeout} from "../context/UserContext";
+import {Message} from "@mui/icons-material";
 
 const messageRef = collection(db, "messages");
 const conversationRef = collection(db, "conversation");
@@ -123,47 +124,6 @@ export default function Home() {
     const onSendMessage = async (message) => {
         console.log(state.conversationId);
 
-        // addDoc(messageRef, {
-        //     conversationId: state.conversationId,
-        //     sentAt: serverTimestamp(),
-        //     content: message,
-        //     sender: Speaker.User,
-        // })
-        //     .then(() => {
-        //         setMessages((prevMessages) => [
-        //             new Chat(message, Speaker.User),
-        //             ...prevMessages,
-        //         ]);
-        //         console.log("yeah damn");
-
-        //         fetch("http://localhost:5000/get-response", {
-        //             method: "POST", // or 'PUT'
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify({message: message}),
-        //         })
-        //             .then((res) => res.json())
-        //             .then((res) => {
-        //                 setMessages((prevMessages) => [
-        //                     new Chat(res.response, Speaker.AI),
-        //                     ...prevMessages,
-        //                 ]);
-        //                 addDoc(messageRef, {
-        //                     conversationId: state.conversationId,
-        //                     sentAt: serverTimestamp(),
-        //                     content: res.response,
-        //                     sender: Speaker.AI,
-        //                 });
-        //             })
-        //             .catch((error) => console.log(error));
-        //     })
-        //     .catch(() => {
-        //         console.log("error");
-        //     });
-
-        // console.log("server timestamp", serverTimestamp());
-
         const firestoreUserMessage = {
             conversationId: state.conversationId,
             content: message,
@@ -182,7 +142,7 @@ export default function Home() {
                 const docSnapshot = await getDoc(docRef);
                 const data = docSnapshot.data();
 
-                setMessages(prevMessages => 
+                setMessages((prevMessages) =>
                     prevMessages.map((item) =>
                         item.id === userMessage.id
                             ? {...data, status: MessageStatus.SENT, id: data.id}
@@ -190,8 +150,58 @@ export default function Home() {
                     )
                 );
             })
+            .then(() => {
+                const aiMessage = {
+                    status: MessageStatus.PENDING,
+                    id: messages.length,
+                    sender: Speaker.AI,
+                };
+                setMessages((prevMessages) => [
+                    aiMessage,
+                    ...prevMessages,
+                ]);
+
+                fetch("http://localhost:5000/get-response", {
+                    method: "POST", // or 'PUT'
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({message: message}),
+                })
+                    .then((res) => {
+                       
+                        return res.json();
+                    })
+                    .then((data) => {
+                        const firestoreAIMessage = {
+                            conversationId: state.conversationId,
+                            content: data.response,
+                            sentAt: serverTimestamp(),
+                            sender: Speaker.AI,
+                        };
+                        addDoc(messageRef, firestoreAIMessage).then(
+                            async (docRef) => {
+                                const docSnapshot = await getDoc(docRef);
+                                const data = docSnapshot.data();
+
+                                // setMessages((prevMessages) =>
+                                //     prevMessages.map((item) =>
+                                //         item.id === aiMessage.id
+                                //             ? {
+                                //                   ...data,
+                                //                   status: MessageStatus.SENT,
+                                //                   id: data.id,
+                                //               }
+                                //             : item
+                                //     )
+                                // );
+                                console.log("data", data);
+                            }
+                        );
+                    }).catch((error) => {});
+            })
             .catch((error) => {
-                setMessages((prevMessages) => 
+                setMessages((prevMessages) =>
                     prevMessages.map((item) =>
                         item.id === userMessage.id
                             ? {...item, status: MessageStatus.ERROR}
@@ -212,15 +222,6 @@ export default function Home() {
         // }
 
         console.log("ue");
-
-        // const res = await fetch("http://localhost:5000/get-response", {
-        //     method: "POST", // or 'PUT'
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({message: message}),
-        // });
-        // const data = await res.json();
     };
 
     useEffect(() => {
