@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef, useLayoutEffect} from "react";
 import UserInput from "../components/UserInput";
 import ChatHistory from "../components/ChatHistory";
 import {Chat, MessageStatus, Speaker} from "../chat";
 import MenuIcon from "@mui/icons-material/Menu";
 import {IconButton} from "@mui/material";
 import Drawer from "../components/Drawer";
+import "./Home.css";
 import {
     addDoc,
     collection,
@@ -29,6 +30,7 @@ export default function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [canSend, setCanSend] = useState(true);
     const [loadingChatHistory, setLoadingChatHistory] = useState(true);
+    const bottomRef = useRef(null);
 
     // const onSendMessage = (message) => {
     //     setMessages((prevMessages) => [
@@ -123,7 +125,18 @@ export default function Home() {
         });
     }, [state.conversationId]);
 
-    const onSendMessage = async (message) => {
+    const scrollToBottom = () => {
+        // Scroll to the element
+        console.log("scroll");
+        bottomRef?.current?.scrollIntoView({behavior: "smooth"});
+    };
+
+    useLayoutEffect(() => {
+        console.log("message sent")
+        scrollToBottom();
+    }, [messages])
+
+    const onSendMessage = (message) => {
         console.log(state.conversationId);
         setCanSend(false);
 
@@ -138,6 +151,7 @@ export default function Home() {
             status: MessageStatus.PENDING,
             id: messages.length,
         };
+
         setMessages([userMessage, ...messages]);
 
         runQueryWithTimeout(addDoc(messageRef, firestoreUserMessage), 6000)
@@ -225,8 +239,8 @@ export default function Home() {
     };
 
     return (
-        <div className="flex bg-secondary-200 w-screen h-screen justify-center px-6 ">
-            <div className="fixed h-12 w-full bg-secondary-100 flex justify-center items-center text-lg text-white">
+        <div className="container bg-secondary-200">
+            <div className="h-12 bg-secondary-100 flex justify-center items-center text-lg text-white header">
                 <button
                     className="absolute left-3"
                     onClick={() => setDrawerOpen(true)}
@@ -238,18 +252,16 @@ export default function Home() {
             </div>
             <Drawer isOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
             {loadingChatHistory ? (
-                <div className="flex flex-col justify-center items-center">
+                <div className="mx-auto my-auto">
                     <p className="text-primary-100">Loading chat history....</p>
                 </div>
             ) : (
-                <div className="flex flex-col justify-end flex-1 max-w-screen-md">
+                <div className="overflow-auto px-6">
                     <ChatHistory messages={messages} />
-                    <UserInput
-                        onSendMessage={onSendMessage}
-                        canSend={canSend}
-                    />
+                    <div ref={bottomRef} className="scroll"></div>
                 </div>
             )}
+            <UserInput onSendMessage={onSendMessage} canSend={canSend} />
         </div>
     );
 }

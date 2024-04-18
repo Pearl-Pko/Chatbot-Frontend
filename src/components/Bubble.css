@@ -38,3 +38,7 @@
         opacity: 1;
     }
 }
+
+.bubble-text {
+    max-width: 85%;
+}
