@@ -161,7 +161,7 @@ export default function Home() {
                 };
                 setMessages((prevMessages) => [aiMessage, ...prevMessages]);
 
-                fetch("http://localhost:5000/get-response", {
+                fetch("http://localhost:5000/reply", {
                     method: "POST", // or 'PUT'
                     headers: {
                         "Content-Type": "application/json",
@@ -169,12 +169,13 @@ export default function Home() {
                     body: JSON.stringify({message: message}),
                 })
                     .then((res) => {
+                        console.log(res);
                         return res.json();
                     })
                     .then((data) => {
                         const firestoreAIMessage = {
                             conversationId: state.conversationId,
-                            content: data.response,
+                            content: data.message,
                             sentAt: serverTimestamp(),
                             sender: Speaker.AI,
                         };
