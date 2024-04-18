@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {IconButton} from "@mui/material";
 import Drawer from "../components/Drawer";
 import "./Home.css";
+import IonIcon from "@reacticons/ionicons";
 import {
     addDoc,
     collection,
@@ -20,6 +21,8 @@ import {
 import {auth, db} from "../firebase";
 import {useUser, runQueryWithTimeout} from "../context/UserContext";
 import {Message} from "@mui/icons-material";
+import useIntersectionObserver from "../hooks/useInteractionObserver";
+import ScrollToBottom from "../components/ScrollToBottom";
 
 const messageRef = collection(db, "messages");
 const conversationRef = collection(db, "conversation");
@@ -31,6 +34,11 @@ export default function Home() {
     const [canSend, setCanSend] = useState(true);
     const [loadingChatHistory, setLoadingChatHistory] = useState(true);
     const bottomRef = useRef(null);
+    const inputRef = useRef(null);
+    const [isVisible] = useIntersectionObserver(bottomRef, {
+        root: null,
+        rootMargin: "5px"
+    })
 
     // const onSendMessage = (message) => {
     //     setMessages((prevMessages) => [
@@ -261,7 +269,8 @@ export default function Home() {
                     <div ref={bottomRef} className="scroll"></div>
                 </div>
             )}
-            <UserInput onSendMessage={onSendMessage} canSend={canSend} />
+            <ScrollToBottom scrollToBottom={scrollToBottom} inputElement={inputRef}/>
+            <UserInput forwardedRef={inputRef} acs={true} onSendMessage={onSendMessage} canSend={canSend} />
         </div>
     );
 }

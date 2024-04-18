@@ -4,23 +4,22 @@ import {Icon, IconButton} from "@mui/material";
 import "./UserInput.css";
 import clsx from "clsx";
 
-export default function UserInput({onSendMessage, canSend}) {
+export default function UserInput({onSendMessage, canSend, forwardedRef}) {
     const [message, setMessage] = useState("");
     const [sendButtonDisabled, setSendButtonDisabled] = useState(canSend);
 
     useEffect(() => {
-        setSendButtonDisabled(!canSend || message.length === 0)
-    }, [canSend, message])
-
+        setSendButtonDisabled(!canSend || message.length === 0);
+    }, [canSend, message]);
 
     const handleInputChange = (event) => {
         setMessage(event.target.value);
     };
 
-	const sendMessage = (ev) => {
-		onSendMessage(message);
-		setMessage("");
-	}
+    const sendMessage = (ev) => {
+        onSendMessage(message);
+        setMessage("");
+    };
 
     return (
         <div className="flex w-full justify-center gap-2 my-5 px-6">
@@ -35,11 +34,15 @@ export default function UserInput({onSendMessage, canSend}) {
             />
             {/* <IconButton className='bg-white'> */}
             <button
+                ref={forwardedRef}
                 onClick={() => sendMessage()}
-                className={clsx("send-button bg-accent", sendButtonDisabled && "opacity-15")}
+                className={clsx(
+                    "send-button bg-accent",
+                    sendButtonDisabled && "opacity-15"
+                )}
                 disabled={sendButtonDisabled}
             >
-                <SendIcon className="text-primary-100"/>
+                <SendIcon className="text-primary-100" />
             </button>
 
             {/* </IconButton> */}
