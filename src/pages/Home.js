@@ -269,7 +269,7 @@ export default function Home() {
                     <div ref={bottomRef} className="scroll"></div>
                 </div>
             )}
-            <ScrollToBottom scrollToBottom={scrollToBottom} inputElement={inputRef}/>
+            {/* <ScrollToBottom scrollToBottom={scrollToBottom} inputElement={inputRef}/> */}
             <UserInput forwardedRef={inputRef} acs={true} onSendMessage={onSendMessage} canSend={canSend} />
         </div>
     );
