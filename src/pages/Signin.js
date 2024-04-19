@@ -21,7 +21,7 @@ export default function Signin() {
     };
 
     return (
-        <div className="bg-secondary-200 flex-col h-screen flex justify-center items-center">
+        <div className="bg-secondary-200 flex-col h-dvh flex justify-center items-center">
             <form
                 onSubmit={(ev) => handleSignIn(ev)}
                 className="w-full max-w-screen-sm flex flex-col p-6"
