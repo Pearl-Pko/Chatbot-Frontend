@@ -2,11 +2,10 @@ import React, {useEffect, useState, useRef, useLayoutEffect} from "react";
 import UserInput from "../components/UserInput";
 import ChatHistory from "../components/ChatHistory";
 import {Chat, MessageStatus, Speaker} from "../chat";
-import MenuIcon from "@mui/icons-material/Menu";
 import {IconButton} from "@mui/material";
-import Drawer from "../components/Drawer";
 import "./Home.css";
 import IonIcon from "@reacticons/ionicons";
+import AppNavigation from "../components/AppNavigation";
 import {
     addDoc,
     collection,
@@ -23,14 +22,12 @@ import {useUser, runQueryWithTimeout} from "../context/UserContext";
 import {Message} from "@mui/icons-material";
 import useIntersectionObserver from "../hooks/useInteractionObserver";
 import ScrollToBottom from "../components/ScrollToBottom";
-
 const messageRef = collection(db, "messages");
 const conversationRef = collection(db, "conversation");
 
 export default function Home() {
     const {state, updateConversationId} = useUser();
     const [messages, setMessages] = useState([]);
-    const [drawerOpen, setDrawerOpen] = useState(false);
     const [canSend, setCanSend] = useState(true);
     const [loadingChatHistory, setLoadingChatHistory] = useState(true);
     const bottomRef = useRef(null);
@@ -247,18 +244,8 @@ export default function Home() {
     };
 
     return (
-        <div className="container bg-secondary-200">
-            <div className="h-12 bg-secondary-100 flex justify-center items-center text-lg text-white header">
-                <button
-                    className="absolute left-3"
-                    onClick={() => setDrawerOpen(true)}
-                >
-                    <MenuIcon />
-                </button>
+        <>
 
-                <p>KoFIBot</p>
-            </div>
-            <Drawer isOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
             {loadingChatHistory ? (
                 <div className="mx-auto my-auto">
                     <p className="text-primary-100">Loading chat history....</p>
@@ -271,6 +258,6 @@ export default function Home() {
             )}
             {/* <ScrollToBottom scrollToBottom={scrollToBottom} inputElement={inputRef}/> */}
             <UserInput forwardedRef={inputRef} acs={true} onSendMessage={onSendMessage} canSend={canSend} />
-        </div>
+        </>
     );
 }

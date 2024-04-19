@@ -3,10 +3,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import clsx from "clsx";
 import {useUser} from "../context/UserContext";
+import {useNavigate} from "react-router";
 
 export default function Drawer({isOpen, setDrawerOpen}) {
     const {signOut} = useUser();
-    console.log(isOpen);
+    const navigate = useNavigate();
+
     return (
         <div
             className={clsx(
@@ -21,14 +23,20 @@ export default function Drawer({isOpen, setDrawerOpen}) {
                 <ArrowBackIosNewIcon className="text-primary-100" />
             </div>
 
-            <div className="flex items-center gap-2 text-primary-100 hover:bg-secondary-100 hover:bg-opacity-55 active:bg-opacity-100 p-2 rounded-md">
+            <div
+                onClick={() => navigate("/help")}
+                className="flex items-center gap-2 text-primary-100 hover:bg-secondary-100 hover:bg-opacity-55 active:bg-opacity-100 p-2 rounded-md"
+            >
                 <LogoutIcon fontSize="small" />
-                <button onClick={() => signOut()}>help</button>
+                <button>help</button>
             </div>
 
-            <div className="flex items-center gap-2 text-primary-100 hover:bg-secondary-100 hover:bg-opacity-55 active:bg-opacity-100 p-2 rounded-md">
+            <div
+                onClick={() => signOut()}
+                className="flex items-center gap-2 text-primary-100 hover:bg-secondary-100 hover:bg-opacity-55 active:bg-opacity-100 p-2 rounded-md"
+            >
                 <LogoutIcon fontSize="small" />
-                <button onClick={() => signOut()}>logout</button>
+                <button>logout</button>
             </div>
         </div>
     );
