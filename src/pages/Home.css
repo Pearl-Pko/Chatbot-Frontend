@@ -1,0 +1,14 @@
+.container {
+    height: 100dvh;
+    min-width: 100vw;
+    display: grid;
+    margin: 0 auto;
+    grid-template-rows: auto 1fr auto;
+}
+
+.header ~ * {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    /* background-color: white; */
+}

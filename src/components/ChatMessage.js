@@ -6,34 +6,42 @@ import IonIcon from "@reacticons/ionicons";
 import {MessageStatus} from "../chat";
 import "./Bubble.css";
 
-function UserMessageBubble({message, key}) {
-    console.log(message)
+function MessageBubble({sender, message, key}) {
+    const user = message.sender === Speaker.User;
+
     return (
-        <div className="max-w-3/4 min-w-28 flex flex-col self-end">
-            <div className="px-3 py-2 rounded-lg whitespace-pre text-wrap break-words bg-accent text-primary-100 pl-5">
-                <p>{message.content}</p>
-            </div>
-            <div className="text-primary-100 self-end">
-                {/* <Time width="20"/> */}
-                {message.status == MessageStatus.PENDING ? (
-                    <IonIcon name="time-outline" />
-                ) : message.status == MessageStatus.SENT ? (
-                    <div className="flex items-center gap-2">
-                        {/* <IonIcon name="checkmark-done" /> */}
-                        <p className="text-sm">
-                            {message.sentAt
-                                ?.toDate()
-                                .toLocaleTimeString("en-US", {
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                })}
-                        </p>
-                    </div>
+        <div
+            className={clsx(
+                "min-w-28 flex flex-col bubble-text",
+                user ? "self-end" : "self-start"
+            )}
+        >
+            <div
+                className={clsx(
+                    "px-3 py-2 rounded-lg whitespace-pre text-wrap break-words  text-primary-100 pl-5",
+                    user ? "bg-accent" : "bg-secondary-100"
+                )}
+            >
+                {!user && message.status == MessageStatus.PENDING ? (
+                    <ChatBubbleLoading />
                 ) : (
+                    <p>{message.content}</p>
+                )}
+            </div>
+            <div
+                className={clsx(
+                    "text-primary-100",
+                    user ? "self-end" : "self-start"
+                )}
+            >
+                {user && message.status === MessageStatus.PENDING ? (
+                    <IonIcon name="time-outline" />
+                ) : user && message.status === MessageStatus.ERROR ? (
                     <div className="text-red-400">
                         <IonIcon name="alert" />
                     </div>
+                ) : (
+                    <div className="hidden"></div>
                 )}
             </div>
 
@@ -53,48 +61,7 @@ function ChatBubbleLoading() {
     );
 }
 
-
-function AIMessageBubble({message, key}) {
-    return (
-        <div className="max-w-3/4 flex flex-col self-start">
-            <div className="px-3 py-2 rounded-lg whitespace-pre text-wrap break-words bg-secondary-100 text-white pr-5 ">
-                {message.status == MessageStatus.PENDING ? (
-                    <ChatBubbleLoading />
-                ) : (
-                    <p>{message.content}</p>
-                )}
-            </div>
-            <div className="text-primary-100 self-start">
-                {/* <Time width="20"/> */}
-                { message.status == MessageStatus.SENT && (
-                    <div className="flex items-center gap-2">
-                        {/* <IonIcon name="checkmark-done" /> */}
-                        <p className="text-sm">
-                            {message.sentAt
-                                ?.toDate()
-                                .toLocaleTimeString("en-US", {
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                    hour12: true,
-                                })}
-                        </p>
-                    </div>
-                
-                )}
-            </div>
-
-            {/* <Time/> */}
-            {/* <div className="text-white self-end">{message.status}</div> */}
-        </div>
-    );
-}
-
 export default function ChatMessage({message, key}) {
     // console.log(message);
-    console.log("message", message);
-    return message.sender == Speaker.User ? (
-        <UserMessageBubble message={message} key={key} />
-    ) : (
-        <AIMessageBubble message={message} key={key} />
-    );
+    return <MessageBubble message={message} key={key} />;
 }
