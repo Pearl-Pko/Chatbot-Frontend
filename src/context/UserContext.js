@@ -104,7 +104,7 @@ export const UserProvider = ({children}) => {
         // console.log(userName);
         return createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                console.log("signed up");
+                // console.log("signed up");
                 const user = userCredential.user;
                 dispatch({type: actionTypes.SIGN_UP, payload: user.uid});
                 return true;
@@ -138,7 +138,7 @@ export const UserProvider = ({children}) => {
     //pppppp
 
     const signOut = () => {
-        console.log("log out");
+        // console.log("log out");
         // setLoading(true);
         _signOut(auth)
             .then(() => {

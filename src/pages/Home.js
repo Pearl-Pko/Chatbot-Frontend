@@ -132,17 +132,17 @@ export default function Home() {
 
     const scrollToBottom = () => {
         // Scroll to the element
-        console.log("scroll");
+        // console.log("scroll");
         bottomRef?.current?.scrollIntoView({behavior: "smooth"});
     };
 
     useLayoutEffect(() => {
-        console.log("message sent")
+        // console.log("message sent")
         scrollToBottom();
     }, [messages])
 
     const onSendMessage = (message) => {
-        console.log(state.conversationId);
+        // console.log(state.conversationId);
         setCanSend(false);
 
         const firestoreUserMessage = {
@@ -188,7 +188,7 @@ export default function Home() {
                     body: JSON.stringify({message: message}),
                 })
                     .then((res) => {
-                        console.log(res);
+                        // console.log(res);
                         return res.json();
                     })
                     .then((data) => {

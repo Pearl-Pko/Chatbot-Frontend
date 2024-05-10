@@ -10,12 +10,26 @@ COPY package*.json ./
 
 # Install node packages, install serve, build the app, and remove dependencies at the end
 RUN npm install \
-    && npm install -g serve \
-    && npm run build \
-    && rm -fr node_modules
+    && npm install -g serve
 
 # Copy local directories to the current local directory of our docker image (/app)
-COPY ./src ./src
+COPY . .
+
+ARG REACT_APP_FIREBASE_API_KEY
+ARG REACT_APP_FIREBASE_AUTH_DOMAIN
+ARG REACT_APP_FIREBASE_PROJECT_ID
+ARG REACT_APP_FIREBASE_STORAGE_BUCKET
+ARG REACT_APP_MESSAGING_SENDER_ID
+ARG REACT_APP_FIREBASE_APP_ID
+ENV REACT_APP_FIREBASE_API_KEY=${REACT_APP_FIREBASE_API_KEY}
+ENV REACT_APP_FIREBASE_AUTH_DOMAIN=${REACT_APP_FIREBASE_AUTH_DOMAIN}
+ENV REACT_APP_FIREBASE_PROJECT_ID=${REACT_APP_FIREBASE_PROJECT_ID}
+ENV REACT_APP_FIREBASE_STORAGE_BUCKET=${REACT_APP_FIREBASE_STORAGE_BUCKET}
+ENV REACT_APP_MESSAGING_SENDER_ID=${REACT_APP_MESSAGING_SENDER_ID}
+ENV REACT_APP_FIREBASE_APP_ID=${REACT_APP_FIREBASE_APP_ID}
+
+RUN npm run build \
+    && rm -fr node_modules
 
 EXPOSE 3000
 

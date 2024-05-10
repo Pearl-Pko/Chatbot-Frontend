@@ -3,10 +3,10 @@ import IonIcon from "@reacticons/ionicons";
 
 export default function ScrollToBottom({inputElement, scrollToBottom}) {
     const buttonElement = useRef(null);
-    console.log(inputElement);
+    // console.log(inputElement);
 
     useLayoutEffect(() => {
-        console.log(inputElement);
+        // console.log(inputElement);
         const targetElement = buttonElement.current;
         const sourceElement = inputElement.current;
 
@@ -14,7 +14,7 @@ export default function ScrollToBottom({inputElement, scrollToBottom}) {
             const sourceRect = sourceElement.getBoundingClientRect();
             const targetRect = targetElement.getBoundingClientRect();
 
-            console.log("source rect", sourceRect);
+            // console.log("source rect", sourceRect);
 
             // Calculate the desired top position for the target element
             const topPosition = sourceRect.top - targetRect.height;
