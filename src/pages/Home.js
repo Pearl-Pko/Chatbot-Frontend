@@ -180,7 +180,7 @@ export default function Home() {
                 };
                 setMessages((prevMessages) => [aiMessage, ...prevMessages]);
 
-                fetch("/api/reply", {
+                fetch("http://localhost:8000/reply", {
                     method: "POST", // or 'PUT'
                     headers: {
                         "Content-Type": "application/json",
