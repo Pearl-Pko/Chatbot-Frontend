@@ -34,8 +34,8 @@ export default function Home() {
     const inputRef = useRef(null);
     const [isVisible] = useIntersectionObserver(bottomRef, {
         root: null,
-        rootMargin: "5px"
-    })
+        rootMargin: "5px",
+    });
 
     // const onSendMessage = (message) => {
     //     setMessages((prevMessages) => [
@@ -80,6 +80,8 @@ export default function Home() {
 
     /// this tries to create a conversation document for the user or retrieves the already created conversation document
     useEffect(() => {
+        if (!state.user) return;
+
         const conversationQuery = query(
             conversationRef,
             where("user_id", "==", state.user),
@@ -94,15 +96,16 @@ export default function Home() {
                 });
                 return collectionId;
             })
-            .then((collectionId) => {
-                if (!collectionId) {
-                    addDoc(conversationRef, {
-                        user_id: state.user,
-                    }).then((doc) => {
-                        collectionId = doc.id;
-                    });
-                }
-                return collectionId;
+            .then(async (collectionId) => {
+                if (collectionId) return collectionId;
+
+                return addDoc(conversationRef, {
+                    user_id: state.user,
+                }).then((doc) => {
+                    collectionId = doc.id;
+                    setLoadingChatHistory(false);
+                    return collectionId;
+                });
             })
             .then((collectionId) => {
                 updateConversationId(collectionId);
@@ -111,6 +114,8 @@ export default function Home() {
 
     // this code loads the chat history
     useEffect(() => {
+        if (!state.conversationId) return;
+
         const allMessagesQuery = query(
             messageRef,
             where("conversationId", "==", state.conversationId),
@@ -139,7 +144,7 @@ export default function Home() {
     useLayoutEffect(() => {
         // console.log("message sent")
         scrollToBottom();
-    }, [messages])
+    }, [messages]);
 
     const onSendMessage = (message) => {
         // console.log(state.conversationId);
@@ -180,7 +185,7 @@ export default function Home() {
                 };
                 setMessages((prevMessages) => [aiMessage, ...prevMessages]);
 
-                fetch("http://localhost:8000/reply", {
+                fetch("http://localhost:5000/reply", {
                     method: "POST", // or 'PUT'
                     headers: {
                         "Content-Type": "application/json",
@@ -245,19 +250,23 @@ export default function Home() {
 
     return (
         <>
-
             {loadingChatHistory ? (
                 <div className="mx-auto my-auto">
                     <p className="text-primary-100">Loading chat history....</p>
                 </div>
             ) : (
-                <div className="overflow-auto px-6">
+                <div className="overflow-auto px-6 w-full">
                     <ChatHistory messages={messages} />
                     <div ref={bottomRef} className="scroll"></div>
                 </div>
             )}
             {/* <ScrollToBottom scrollToBottom={scrollToBottom} inputElement={inputRef}/> */}
-            <UserInput forwardedRef={inputRef} acs={true} onSendMessage={onSendMessage} canSend={canSend} />
+            <UserInput
+                forwardedRef={inputRef}
+                acs={true}
+                onSendMessage={onSendMessage}
+                canSend={canSend}
+            />
         </>
     );
 }
